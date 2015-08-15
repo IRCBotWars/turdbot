@@ -84,12 +84,6 @@ class Turdbot
             when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s.+\s:[\001]PING (.+)[\001]$/i
                 puts "[ CTCP PING from #{$1}!#{$2}@#{$3} ]"
                 send "NOTICE #{$1} :\001PING #{$4}\001"
-            when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s.+\s:[\001]VERSION[\001]$/i
-                puts "[ CTCP VERSION from #{$1}!#{$2}@#{$3} ]"
-                send "NOTICE #{$1} :\001VERSION Ruby-irc v0.042\001"
-#            when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:EVAL (.+)$/i
-#                puts "[ EVAL #{$5} from #{$1}!#{$2}@#{$3} ]"
-#                send "PRIVMSG #{(($4==@nick)?$1:$4)} :#{evaluate($5)}"
             when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:FORTUNE$/i
                 if $1 != @nick
                     puts "[ fortune request from #{$1}!#{$2}@#{$3} ]"
@@ -135,7 +129,8 @@ class Turdbot
                 chat(count,chan)
                 sleep(1)
             end
-            chat("BLAMMO!",chan)
+            #chat("BLAMMO!",chan)
+            fortune(chan)
         else
             chat("Countdown postponed...",chan)
         end
