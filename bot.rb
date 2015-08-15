@@ -28,8 +28,8 @@ class Turdbot
     #format and send
     ####################
 
-    def chat(s)
-        send "PRIVMSG #{@nick} :#{s}"
+    def chat(s,target=@channel)
+        send "PRIVMSG #{target} :#{s}"
     end # function chat
 
     ####################
@@ -83,7 +83,7 @@ class Turdbot
             when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:COUNTDOWN (.+)$/i
                 if $1 != @nick
                     puts "[ countdown #{$5} from #{$1}!#{$2}@#{$3} ]"
-                    send "PRIVMSG #{(($4==@nick)?$1:$4)} :#{countdown($5)}"
+                    countdown($5,$4)
                 end
             else
                 puts s
@@ -94,20 +94,22 @@ class Turdbot
     #countdown
     ####################
 
-    def countdown(t)
+    def countdown(t,chan)
         t = t.to_i
-        if t.is_a?(Integer)
-            chat "Countdown commencing..."
+        if t.is_a?(Integer) and chan.is_a?(String)
+            chat("Countdown commencing...",chan)
             for i in 0..(t-1)
                 num = t - i
                 count = sprintf("%d...",num)
-                chat count
+                chat(count,chan)
+                sleep(1)
             end
-            chat "BLAMMO!"
+            chat("BLAMMO!",chan)
         else
-            chat "Countdown postponed..."
+            chat("Countdown postponed...",chan)
         end
 
+        return 0
     end # function countdown
 
     ####################
