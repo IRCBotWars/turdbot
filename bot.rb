@@ -25,6 +25,16 @@ class Turdbot
     end # function send
 
     ####################
+    #randomize nick
+    ####################
+
+    def rand_nick
+        new = (0...13).map { (65 + rand(26)).chr }.join
+        @irc.send("NICK #{new}\n",0)
+
+    end # function rand_nick
+
+    ####################
     #format and send
     ####################
 
@@ -77,9 +87,19 @@ class Turdbot
             when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s.+\s:[\001]VERSION[\001]$/i
                 puts "[ CTCP VERSION from #{$1}!#{$2}@#{$3} ]"
                 send "NOTICE #{$1} :\001VERSION Ruby-irc v0.042\001"
-            when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:EVAL (.+)$/i
-                puts "[ EVAL #{$5} from #{$1}!#{$2}@#{$3} ]"
-                send "PRIVMSG #{(($4==@nick)?$1:$4)} :#{evaluate($5)}"
+#            when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:EVAL (.+)$/i
+#                puts "[ EVAL #{$5} from #{$1}!#{$2}@#{$3} ]"
+#                send "PRIVMSG #{(($4==@nick)?$1:$4)} :#{evaluate($5)}"
+            when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:FORTUNE$/i
+                if $1 != @nick
+                    puts "[ fortune request from #{$1}!#{$2}@#{$3} ]"
+                    fortune($4)
+                end
+            when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:NEW NICK$/i
+                if $1 != @nick
+                    puts "[ new nick request from #{$1}!#{$2}@#{$3} ]"
+                    rand_nick()
+                end
             when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:COUNTDOWN (.+)$/i
                 if $1 != @nick
                     puts "[ countdown #{$5} from #{$1}!#{$2}@#{$3} ]"
@@ -90,6 +110,17 @@ class Turdbot
         end
     end # function handle_server_inputs
 
+    ####################
+    #fortune
+    ####################
+
+    def fortune(chan)
+        output = `cowsay $(fortune)`
+        output.split("\n").each { |line|
+            chat(line,chan)
+        }
+
+    end # function fortune
     ####################
     #countdown
     ####################
