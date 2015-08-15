@@ -91,7 +91,7 @@ class Turdbot
             when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:FORTUNE$/i
                 if $1 != @nick
                     puts "[ fortune request from #{$1}!#{$2}@#{$3} ]"
-                    fortune($4)
+                    cowsay($4)
                 end
             when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:NEW NICK$/i
                 if $1 != @nick
@@ -103,7 +103,12 @@ class Turdbot
                     puts "[ countdown #{$5} from #{$1}!#{$2}@#{$3} ]"
                     countdown($5,$4)
                 end
-            when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:STOP$/i
+            when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:TELL EM (.+)$/i
+                if $1 != @nick
+                    puts "[ tellem #{$5}from #{$1}!#{$2}@#{$3} ]"
+                    cowsay($4,"#{$5} -- #{$1}")
+                end
+            when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:STOP (.+?)$/i
                 if $1 != @nick
                     puts "[ stop request from #{$1}!#{$2}@#{$3} ]"
                     @_continue = false
@@ -114,16 +119,17 @@ class Turdbot
     end # function handle_server_inputs
 
     ####################
-    #fortune
+    #cowsay
     ####################
 
-    def fortune(chan)
-        output = `cowsay $(fortune)`
+    def cowsay(chan,say="$(fortune)")
+        output = `cowsay #{say}`
         output.split("\n").each { |line|
             chat(line,chan)
         }
 
-    end # function fortune
+    end # function cowsay
+
     ####################
     #countdown
     ####################
@@ -133,18 +139,18 @@ class Turdbot
         if t.is_a?(Integer) and chan.is_a?(String)
             chat("Countdown commencing...",chan)
             for i in 0..(t-1)
-                num = t - i
-                count = sprintf("%d...",num)
-                chat(count,chan)
-                sleep(1)
                 if ! @_continue
                     chat("Cancelling countdown!")
                     @_continue = true
                     return -1
                 end 
+                num = t - i
+                count = sprintf("%d...",num)
+                chat(count,chan)
+                sleep(1)
             end
             #chat("BLAMMO!",chan)
-            fortune(chan)
+            cowsay(chan)
         else
             chat("Countdown postponed...",chan)
         end
