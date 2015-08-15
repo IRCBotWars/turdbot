@@ -12,6 +12,7 @@ class Turdbot
         @port = port
         @nick = nick
         @channel = channel
+        @_continue = true
     end # function initialize
 
     ####################
@@ -84,6 +85,9 @@ class Turdbot
             when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s.+\s:[\001]PING (.+)[\001]$/i
                 puts "[ CTCP PING from #{$1}!#{$2}@#{$3} ]"
                 send "NOTICE #{$1} :\001PING #{$4}\001"
+            when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s.+\s:[\001]VERSION[\001]$/i
+                puts "[ CTCP VERSION from #{$1}!#{$2}@#{$3} ]"
+                send "NOTICE #{$1} :\001VERSION Ruby-irc v0.042\001"
             when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:FORTUNE$/i
                 if $1 != @nick
                     puts "[ fortune request from #{$1}!#{$2}@#{$3} ]"
@@ -98,6 +102,11 @@ class Turdbot
                 if $1 != @nick
                     puts "[ countdown #{$5} from #{$1}!#{$2}@#{$3} ]"
                     countdown($5,$4)
+                end
+            when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:STOP$/i
+                if $1 != @nick
+                    puts "[ stop request from #{$1}!#{$2}@#{$3} ]"
+                    @_continue = false
                 end
             else
                 puts s
@@ -128,6 +137,11 @@ class Turdbot
                 count = sprintf("%d...",num)
                 chat(count,chan)
                 sleep(1)
+                if ! @_continue
+                    chat("Cancelling countdown!")
+                    @_continue = true
+                    return -1
+                end 
             end
             #chat("BLAMMO!",chan)
             fortune(chan)
@@ -135,7 +149,6 @@ class Turdbot
             chat("Countdown postponed...",chan)
         end
 
-        return 0
     end # function countdown
 
     ####################
@@ -158,9 +171,10 @@ class Turdbot
                 elsif s == @irc then
                     return if @irc.eof
                     s = @irc.gets
-                    handle_server_input(s)
+                    Thread.new{handle_server_input(s)}.pass
                 end
             end
+            
         end
     end # function main_loop
 
