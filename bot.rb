@@ -56,12 +56,10 @@ class Turdbot
     end # function connect
 
     ####################
-    #interpret commands
+    #clean commands
     ####################
 
     def evaluate(s)
-        # Make sure we have a valid expression (for security reasons), and
-        # evaluate it if we do, otherwise return an error message
         if s =~ /^[-+*\/\d\s\eE.()]*$/ then
             begin
                 s.untaint
@@ -100,13 +98,16 @@ class Turdbot
                 end
             when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:COUNTDOWN (.+)$/i
                 if $1 != @nick
-                    puts "[ countdown #{$5} from #{$1}!#{$2}@#{$3} ]"
-                    countdown($5,$4)
+                    #s = $5.match(/^[[:num:]]+$/)
+                    puts "[ countdown #{s} from #{$1}!#{$2}@#{$3} ]"
+                    countdown(s,$4)
                 end
             when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:TELL EM (.+)$/i
                 if $1 != @nick
-                    puts "[ tellem #{$5}from #{$1}!#{$2}@#{$3} ]"
-                    cowsay($4,"#{$5} -- #{$1}")
+                    #s = $5.match(/^[[:alnum:]]+$/)
+                    #n = $1#.gsub(/[^\p{Alnum}\p{Space}-]/u, '')
+                    puts "[ tellem #{s}from #{$1}!#{$2}@#{$3} ]"
+                    cowsay($4,"#{s} -- #{n}")
                 end
             when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:STOP (.+?)$/i
                 if $1 != @nick
