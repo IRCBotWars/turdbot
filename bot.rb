@@ -60,17 +60,9 @@ class Turdbot
     #clean commands
     ####################
 
-    def evaluate(s)
-        if s =~ /^[-+*\/\d\s\eE.()]*$/ then
-            begin
-                s.untaint
-                return eval(s).to_s
-            rescue Exception => detail
-                puts detail.message()
-            end
-        end
-        return "...i took a dump"
-    end # function evaluate
+    def clean(s)
+        return s.gsub(/[`#$%^&*()\\\/\'\"<>]*/, '\\1')
+    end # function clean
 
     ####################
     #handle server inputs
@@ -100,15 +92,12 @@ class Turdbot
             when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:COUNTDOWN (.+)$/i
             puts "[ #{s} ]"
                 if $1 != @nick
-             #       s = $5.gsub(/[^0^1^2^3^4^5^6^7^8^9]*/, '')
                     puts "[ countdown #{s} from #{$1}!#{$2}@#{$3} ]"
-                    countdown(s,$4)
+                    countdown($5,$4)
                 end
             when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:TELL EM (.+)$/i
             puts "[ #{s} ]"
                 if $1 != @nick
-             #       s = $5.gsub(/[\W\S]*/u, '')
-             #       n = $1.gsub(/[\W\S]*/u, '')
                     puts "[ tellem #{s}from #{$1}!#{$2}@#{$3} ]"
                     cowsay($4,"#{$5} -- #{$1}")
                 end
@@ -128,6 +117,9 @@ class Turdbot
     ####################
 
     def cowsay(chan,say="$(fortune)")
+        if say != "$(fortune)"
+            say = clean(say)
+        end
         output = `cowsay #{say}`
         output.split("\n").each { |line|
             chat(line,chan)
@@ -154,7 +146,6 @@ class Turdbot
                 chat(count,chan)
                 sleep(1)
             end
-            #chat("BLAMMO!",chan)
             cowsay(chan)
         else
             chat("Countdown postponed...",chan)
