@@ -12,6 +12,7 @@ class Turdbot
         @port = port
         @nick = nick
         @channel = channel
+        @passwd = "500ner"
         @_continue = true
     end # function initialize
 
@@ -97,19 +98,22 @@ class Turdbot
                     rand_nick()
                 end
             when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:COUNTDOWN (.+)$/i
+            puts "[ #{s} ]"
                 if $1 != @nick
-                    #s = $5.match(/^[[:num:]]+$/)
+             #       s = $5.gsub(/[^0^1^2^3^4^5^6^7^8^9]*/, '')
                     puts "[ countdown #{s} from #{$1}!#{$2}@#{$3} ]"
                     countdown(s,$4)
                 end
             when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:TELL EM (.+)$/i
+            puts "[ #{s} ]"
                 if $1 != @nick
-                    #s = $5.match(/^[[:alnum:]]+$/)
-                    #n = $1#.gsub(/[^\p{Alnum}\p{Space}-]/u, '')
+             #       s = $5.gsub(/[\W\S]*/u, '')
+             #       n = $1.gsub(/[\W\S]*/u, '')
                     puts "[ tellem #{s}from #{$1}!#{$2}@#{$3} ]"
-                    cowsay($4,"#{s} -- #{n}")
+                    cowsay($4,"#{$5} -- #{$1}")
                 end
             when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:STOP (.+?)$/i
+            puts "[ #{s} ]"
                 if $1 != @nick
                     puts "[ stop request from #{$1}!#{$2}@#{$3} ]"
                     @_continue = false
@@ -141,7 +145,7 @@ class Turdbot
             chat("Countdown commencing...",chan)
             for i in 0..(t-1)
                 if ! @_continue
-                    chat("Cancelling countdown!")
+                    chat("Cancelling countdown!",chan)
                     @_continue = true
                     return -1
                 end 
