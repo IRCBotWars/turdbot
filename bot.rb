@@ -102,7 +102,7 @@ class Turdbot
                     puts "[ tellem #{s}from #{$1}!#{$2}@#{$3} ]"
                     cowsay($4,"#{$5} -- #{$1}")
                 end
-            when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:STOP (.+?)$/i
+            when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:STOP(.+)?$/i
             puts "[ #{s} ]"
                 if $1 != @nick
                     puts "[ stop request from #{$1}!#{$2}@#{$3} ]"
