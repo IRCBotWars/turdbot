@@ -63,6 +63,8 @@ class Turdbot
     def clean(s)
         #return Shellwords.escape(s)
         return s.gsub(/[`\[\]\{\}!.\?#$%^&*;:()|\/\'\"<>]*/){|c|'\\'+c}
+        #return s.gsub(/[`#$%^&\*;:()\\\/\'\"<>]*/, '')
+        #return s.gsub(/[`#$%^&\*;:()\\\/\'\"<>]*/, '\\1')
     end # function clean
 
     ####################
@@ -95,12 +97,22 @@ class Turdbot
                     puts "[ countdown #{s} from #{$1}!#{$2}@#{$3} ]"
                     countdown($5,$4)
                 end
+<<<<<<< HEAD
             when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:TELLEM(.+)$/i
+=======
+            when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:TELL(.+)?EM (.+)$/i
+            puts "[ #{s} ]"
+>>>>>>> 510b0abc7e8860e8655dc8526e73fd61ae8fdd8a
                 if $1 != @nick
                     puts "[ tellem #{s}from #{$1}!#{$2}@#{$3} ]"
-                    cowsay($4,"#{$5} -- #{$1}")
+                    cowsay($4,"#{$6} -- #{$1}")
                 end
+<<<<<<< HEAD
             when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:STOP (.+?)$/i
+=======
+            when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:STOP(.+)?$/i
+            puts "[ #{s} ]"
+>>>>>>> 510b0abc7e8860e8655dc8526e73fd61ae8fdd8a
                 if $1 != @nick
                     puts "[ stop request from #{$1}!#{$2}@#{$3} ]"
                     @_continue = false
@@ -116,9 +128,12 @@ class Turdbot
 
     def cowsay(chan,say="$(fortune)")
         if say != "$(fortune)"
+            p say
             say = clean(say)
+            p say
         end
         output = `cowsay #{say}`
+        p output
         output.split("\n").each { |line|
             chat(line,chan)
         }
