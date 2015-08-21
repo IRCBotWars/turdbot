@@ -62,9 +62,9 @@ class Turdbot
 
     def clean(s)
         #return Shellwords.escape(s)
-        return s.gsub(/[`\[\]\{\}!.\?#$%^&*;:()|\/\'\"<>]*/){|c|'\\'+c}
+        #return s.gsub(/[`\[\]\{\}!.\?#$%^&*;:()|\/\'\"<>]*/){|c|'\\'+c}
         #return s.gsub(/[`#$%^&\*;:()\\\/\'\"<>]*/, '')
-        #return s.gsub(/[`#$%^&\*;:()\\\/\'\"<>]*/, '\\1')
+        return s.gsub(/[`#$%^&\*;:()\\\/\'\"<>]*/, '\\1')
     end # function clean
 
     ####################
