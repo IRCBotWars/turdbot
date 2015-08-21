@@ -62,7 +62,8 @@ class Turdbot
 
     def clean(s)
         #return Shellwords.escape(s)
-        return s.gsub(/[`#$%^&*;:()\\\/\'\"<>]*/, '\\1')
+        #return s.gsub(/[`#$%^&\*;:()\\\/\'\"<>]*/, '')
+        return s.gsub(/[`#$%^&\*;:()\\\/\'\"<>]*/, '\\1')
     end # function clean
 
     ####################
@@ -96,11 +97,11 @@ class Turdbot
                     puts "[ countdown #{s} from #{$1}!#{$2}@#{$3} ]"
                     countdown($5,$4)
                 end
-            when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:TELL EM (.+)$/i
+            when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:TELL(.+)?EM (.+)$/i
             puts "[ #{s} ]"
                 if $1 != @nick
                     puts "[ tellem #{s}from #{$1}!#{$2}@#{$3} ]"
-                    cowsay($4,"#{$5} -- #{$1}")
+                    cowsay($4,"#{$6} -- #{$1}")
                 end
             when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:STOP(.+)?$/i
             puts "[ #{s} ]"
@@ -119,9 +120,12 @@ class Turdbot
 
     def cowsay(chan,say="$(fortune)")
         if say != "$(fortune)"
+            p say
             say = clean(say)
+            p say
         end
         output = `cowsay #{say}`
+        p output
         output.split("\n").each { |line|
             chat(line,chan)
         }
