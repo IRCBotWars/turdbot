@@ -62,7 +62,7 @@ class Turdbot
 
     def clean(s)
         #return Shellwords.escape(s)
-        return s.gsub(/[`#$%^&*;:()\\\/\'\"<>]*/, '\\1')
+        return s.gsub(/[`\[\]\{\}!.\?#$%^&*;:()|\/\'\"<>]*/){|c|'\\'+c}
     end # function clean
 
     ####################
@@ -91,19 +91,16 @@ class Turdbot
                     rand_nick()
                 end
             when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:COUNTDOWN (.+)$/i
-            puts "[ #{s} ]"
                 if $1 != @nick
                     puts "[ countdown #{s} from #{$1}!#{$2}@#{$3} ]"
                     countdown($5,$4)
                 end
-            when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:TELL EM (.+)$/i
-            puts "[ #{s} ]"
+            when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:TELLEM(.+)$/i
                 if $1 != @nick
                     puts "[ tellem #{s}from #{$1}!#{$2}@#{$3} ]"
                     cowsay($4,"#{$5} -- #{$1}")
                 end
             when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:STOP (.+?)$/i
-            puts "[ #{s} ]"
                 if $1 != @nick
                     puts "[ stop request from #{$1}!#{$2}@#{$3} ]"
                     @_continue = false
