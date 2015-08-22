@@ -133,9 +133,7 @@ class Turdbot
 
     def cowsay(chan,say="$(fortune)")
         if say != "$(fortune)"
-            p say
             say = clean(say)
-            p say
         end
         output = `cowsay #{say}`
         p output
