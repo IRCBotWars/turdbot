@@ -162,6 +162,7 @@ class Turdbot
     ####################
 
     def main_loop()
+        begin
         while true
             ready = select([@irc, $stdin], nil, nil, nil)
 
@@ -178,9 +179,16 @@ class Turdbot
                     return if @irc.eof
                     s = @irc.gets
                     Thread.new{handle_server_input(s)}.pass
+                    #Thread.current.pass
                 end
             end
             
+        end
+        rescue Interrupt
+        rescue Exception => detail
+            #puts detail.message()
+            #print detail.backtrace.join("\n")
+            retry
         end
     end # function main_loop
 
@@ -192,11 +200,4 @@ end # class Turdbot
 
 irc = Turdbot.new('irc.haxzor.ninja', 6667, 'turdbot', '#botwars')
 irc.connect()
-begin
-    irc.main_loop()
-rescue Interrupt
-rescue Exception => detail
-    puts detail.message()
-    print detail.backtrace.join("\n")
-    retry
-end
+irc.main_loop()
