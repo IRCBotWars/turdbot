@@ -8,12 +8,14 @@ class Turdbot
     ####################
 
     def initialize(server, port, nick, channel)
-        @server = server
-        @port = port
-        @nick = nick
-        @channel = channel
-        @passwd = "500ner"
-        @_continue = true
+        @data = {}
+        @data[:server] = server
+        @data[:port] = port
+        @data[:nick] = nick
+        @data[:channel] = channel
+        @data[:passwd] = "500ner"
+        @data[:continue] = true
+        @data[:id] = false
     end # function initialize
 
     ####################
@@ -21,7 +23,6 @@ class Turdbot
     ####################
 
     def send(s)
-        # Send a message to the irc server and print it to the screen
         puts "--> #{s}"
         @irc.send "#{s}\n", 0 
     end # function send
@@ -40,20 +41,31 @@ class Turdbot
     #format and send
     ####################
 
-    def chat(s,target=@channel)
+    def chat(s,target=@data[:channel])
         send "PRIVMSG #{target} :#{s}"
     end # function chat
+
+    ####################
+    #identify nick
+    ####################
+
+    def identify()
+        if !@data[:id]
+            send "PRIVMSG NickServ IDENTIFY #{@data[:passwd]}"
+            send "JOIN #{@data[:channel]}"
+            @data[:id] = true
+        end
+
+    end # function identify
 
     ####################
     #establish connection
     ####################
 
     def connect()
-        # Connect to the IRC server
-        @irc = TCPSocket.open(@server, @port)
+        @irc = TCPSocket.open(@data[:server], @data[:port])
         send "USER turd bot 2.0 :the wreckening"
-        send "NICK #{@nick}"
-        send "JOIN #{@channel}"
+        send "NICK #{@data[:nick]}"
     end # function connect
 
     ####################
@@ -61,9 +73,6 @@ class Turdbot
     ####################
 
     def clean(s)
-        #return Shellwords.escape(s)
-        #return s.gsub(/[`\[\]\{\}!.\?#$%^&*;:()|\/\'\"<>]*/){|c|'\\'+c}
-        #return s.gsub(/[`#$%^&\*;:()\\\/\'\"<>]*/, '')
         return s.gsub(/[`#$%^&\*;:()\\\/\'\"<>]*/, '\\1')
     end # function clean
 
@@ -82,31 +91,36 @@ class Turdbot
             when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s.+\s:[\001]VERSION[\001]$/i
                 puts "[ CTCP VERSION from #{$1}!#{$2}@#{$3} ]"
                 send "NOTICE #{$1} :\001VERSION Ruby-irc v0.042\001"
+            when /^:(.+?)!(.+?)@(.+?)\sNOTICE\s(.+)\s:please choose a different nick.$/i
+                if $1 != @data[:nick]
+                    puts "[ identify request from #{$1}!#{$2}@#{$3} ]"
+                    identify
+                end
             when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:FORTUNE$/i
-                if $1 != @nick
+                if $1 != @data[:nick]
                     puts "[ fortune request from #{$1}!#{$2}@#{$3} ]"
                     cowsay($4)
                 end
             when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:NEW NICK$/i
-                if $1 != @nick
+                if $1 != @data[:nick]
                     puts "[ new nick request from #{$1}!#{$2}@#{$3} ]"
                     rand_nick()
                 end
             when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:COUNTDOWN (.+)$/i
-                if $1 != @nick
+                if $1 != @data[:nick]
                     puts "[ countdown #{s} from #{$1}!#{$2}@#{$3} ]"
                     countdown($5,$4)
                 end
             when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:TELL(.+)?EM (.+)$/i
-                if $1 != @nick
+                if $1 != @data[:nick]
                     puts "[ tellem #{s}from #{$1}!#{$2}@#{$3} ]"
                     cowsay($4,"#{$6} -- #{$1}")
                 end
             when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:STOP(.+)?$/i
             puts "[ #{s} ]"
-                if $1 != @nick
+                if $1 != @data[:nick]
                     puts "[ stop request from #{$1}!#{$2}@#{$3} ]"
-                    @_continue = false
+                    @data[:continue] = false
                 end
             else
                 puts s
@@ -140,9 +154,9 @@ class Turdbot
         if t.is_a?(Integer) and chan.is_a?(String)
             chat("Countdown commencing...",chan)
             for i in 0..(t-1)
-                if ! @_continue
+                if ! @data[:continue]
                     chat("Cancelling countdown!",chan)
-                    @_continue = true
+                    @data[:continue] = true
                     return -1
                 end 
                 num = t - i
@@ -179,7 +193,6 @@ class Turdbot
                     return if @irc.eof
                     s = @irc.gets
                     Thread.new{handle_server_input(s)}.pass
-                    #Thread.current.pass
                 end
             end
             
