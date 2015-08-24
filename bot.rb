@@ -73,7 +73,18 @@ class Turdbot
     ####################
 
     def clean(s)
-        return s.gsub(/[`#$%^&\*;:()\\\/\'\"<>]*/, '\\1')
+#        return s.gsub(/[`#$%^&\*;:()\\\/\'\"<>]*/, '\\1')
+        chars = s.split(//)
+        out = ""
+        chars.each do |c|
+            if c == "\\"
+                next
+            end
+
+            out += "\\"
+            out += c
+        end
+        out
     end # function clean
 
     ####################
@@ -135,6 +146,7 @@ class Turdbot
         if say != "$(fortune)"
             say = clean(say)
         end
+        #input = 'cowsay #{say}'
         output = `cowsay #{say}`
         p output
         output.split("\n").each { |line|
