@@ -73,7 +73,6 @@ class Turdbot
     ####################
 
     def clean(s)
-#        return s.gsub(/[`#$%^&\*;:()\\\/\'\"<>]*/, '\\1')
         chars = s.split(//)
         out = ""
         chars.each do |c|
@@ -144,7 +143,9 @@ class Turdbot
 
     def cowsay(chan,say="$(fortune)")
         if say != "$(fortune)"
+p say
             say = clean(say)
+p say
         end
         #input = 'cowsay #{say}'
         output = `cowsay #{say}`
