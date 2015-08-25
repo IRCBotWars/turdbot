@@ -16,6 +16,13 @@ class Turdbot
         @data[:passwd] = "500ner"
         @data[:continue] = true
         @data[:id] = false
+        @cowlist = ["beavis.zen","bong","bud-frogs","bunny","cheese","cower","daemon",\
+            "default","dragon","dragon-and-cow","elephant","elephant-in-snake","eyes",\
+            "flaming-sheep","ghostbusters","head-in","hellokitty","kiss","kitty","koala",\
+            "kosh","luke-koala","meow","milk","moofasa","moose","mutilated","ren",\
+            "satanic","sheep","skeleton","small","sodomized","stegosaurus","stimpy",\
+            "supermilker","surgery","telebears","three-eyes","turkey","turtle","tux",\
+            "udder","vader","vader-koala","www"]
     end # function initialize
 
     ####################
@@ -121,10 +128,10 @@ class Turdbot
                     puts "[ countdown #{s} from #{$1}!#{$2}@#{$3} ]"
                     countdown($5,$4)
                 end
-            when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:TELL(.+)?EM (.+)$/i
+            when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:(.+)?TELL(.+)?EM (.+)$/i
                 if $1 != @data[:nick]
-                    puts "[ tellem #{s}from #{$1}!#{$2}@#{$3} ]"
-                    cowsay($4,"#{$6} -- #{$1}")
+                    puts "[ tellem #{$7} as #{$5} from #{$1}!#{$2}@#{$3} ]"
+                    cowsay($4,"#{$7} -- #{$1}",$5)
                 end
             when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:STOP(.+)?$/i
             puts "[ #{s} ]"
@@ -141,15 +148,15 @@ class Turdbot
     #cowsay
     ####################
 
-    def cowsay(chan,say="$(fortune)")
+    def cowsay(chan,say="$(fortune)",form="default")
         if say != "$(fortune)"
-p say
             say = clean(say)
-p say
         end
-        #input = 'cowsay #{say}'
-        output = `cowsay #{say}`
-        p output
+        if form == nil or (!@cowlist.index(form[0..-2]))
+            form = "default"
+        end
+        form.chomp
+        output = `cowsay -f #{form} #{say}`
         output.split("\n").each { |line|
             chat(line,chan)
         }
