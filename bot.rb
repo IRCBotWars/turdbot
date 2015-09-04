@@ -80,6 +80,7 @@ class Turdbot
     ####################
 
     def clean(s)
+        s.gsub!(/^[-]*/,'')
         chars = s.split(//)
         out = ""
         chars.each do |c|
