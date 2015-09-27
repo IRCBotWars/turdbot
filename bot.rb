@@ -1,4 +1,12 @@
 #!/usr/local/bin/ruby
+#
+# turdbot
+#
+# Description: Toy IRC bot 
+#
+# Author: Geno Nullfree
+
+
 require "socket"
 require "htmlentities"
 
