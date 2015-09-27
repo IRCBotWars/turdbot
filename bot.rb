@@ -1,5 +1,6 @@
 #!/usr/local/bin/ruby
 require "socket"
+require "cgi"
 
 class Turdbot
 
@@ -76,6 +77,24 @@ class Turdbot
     end # function connect
 
     ####################
+    #clean html
+    ####################
+
+    def rem_spaces(s)
+        s.gsub!(/^[-]*/,'')
+        chars = s.split(//)
+        out = ""
+        chars.each do |c|
+            if c == " "
+                out += "%20"
+            else
+                out += c
+            end
+        end
+        out
+    end # function clean
+
+    ####################
     #clean commands
     ####################
 
@@ -129,6 +148,11 @@ class Turdbot
                     puts "[ countdown #{s} from #{$1}!#{$2}@#{$3} ]"
                     countdown($5,$4)
                 end
+            when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:(.+)?[SHOW ME|WIKI] (.+)$/i
+                if $1 != @data[:nick]
+                    puts "[ show me #{$6} from #{$1}!#{$2}@#{$3} ]"
+                    showme($4,$6)
+                end
             when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:(.+)?TELL(.+)?EM (.+)$/i
                 if $1 != @data[:nick]
                     puts "[ tellem #{$7} as #{$5} from #{$1}!#{$2}@#{$3} ]"
@@ -144,6 +168,17 @@ class Turdbot
                 puts s
         end
     end # function handle_server_inputs
+
+    ####################
+    #showme
+    ####################
+
+    def showme(chan,query)
+        qu = CGI.escapeHTML(query)
+        q = rem_spaces(qu)
+        chat("https://en.wikipedia.org/wiki/#{q}",chan)
+        #chat("https://www.google.com/webhp?#q=#{q}&btnI",chan)
+    end # function showme
 
     ####################
     #cowsay
