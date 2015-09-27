@@ -1,6 +1,6 @@
 #!/usr/local/bin/ruby
 require "socket"
-require "cgi"
+require "htmlentities"
 
 class Turdbot
 
@@ -81,7 +81,6 @@ class Turdbot
     ####################
 
     def rem_spaces(s)
-        s.gsub!(/^[-]*/,'')
         chars = s.split(//)
         out = ""
         chars.each do |c|
@@ -148,7 +147,7 @@ class Turdbot
                     puts "[ countdown #{s} from #{$1}!#{$2}@#{$3} ]"
                     countdown($5,$4)
                 end
-            when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:(.+)?[SHOW ME|WIKI] (.+)$/i
+            when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:([SHOW ME|WIKI]) (.+)$/i
                 if $1 != @data[:nick]
                     puts "[ show me #{$6} from #{$1}!#{$2}@#{$3} ]"
                     showme($4,$6)
@@ -174,8 +173,12 @@ class Turdbot
     ####################
 
     def showme(chan,query)
-        qu = CGI.escapeHTML(query)
+        p query
+        encoder = HTMLEntities.new
+        qu = encoder.encode(query, :basic, :hexadecimal)
+        p qu
         q = rem_spaces(qu)
+        p q
         chat("https://en.wikipedia.org/wiki/#{q}",chan)
         #chat("https://www.google.com/webhp?#q=#{q}&btnI",chan)
     end # function showme
