@@ -175,7 +175,7 @@ class Turdbot
             when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:(.+)?T(.+)?R(.+)?U(.+)?M(.+)?P(.+)?$/i
                 if $1 != @data[:nick]
                     puts "[ triggered tRUMPsay from #{$1}!#{$2}@#{$3} ]"
-                    cowsay($4,"#{@trumpsay.sample} -- tRUMP",$5)
+                    cowsay($4,"#{@trumpsay.sample} -- Le Don",$5)
                 end
             else
                 puts s
