@@ -32,6 +32,7 @@ class Turdbot
             "satanic","sheep","skeleton","small","sodomized","stegosaurus","stimpy",\
             "supermilker","surgery","telebears","three-eyes","turkey","turtle","tux",\
             "udder","vader","vader-koala","www"]
+	@trumpsay = ["I will build a great wall – and nobody builds walls better than me, believe me – and I’ll build them very inexpensively. I will build a great, great wall on our southern border, and I will make Mexico pay for that wall. Mark my words.","When Mexico sends its people, they’re not sending the best. They’re not sending you, they’re sending people that have lots of problems and they’re bringing those problems with us. They’re bringing drugs. They’re bring crime. They’re rapists… And some, I assume, are good people.","All of the women on The Apprentice flirted with me – consciously or unconsciously. That’s to be expected.","One of they key problems today is that politics is such a disgrace. Good people don’t go into government.","The beauty of me is that I’m very rich.","It’s freezing and snowing in New York – we need global warming!","My fingers are long and beautiful, as, it has been well documented, are various other parts of my body.","The point is, you can never be too greedy.","My Twitter has become so powerful that I can actually make my enemies tell the truth.","My IQ is one of the highest — and you all know it! Please don't feel so stupid or insecure; it's not your fault.","The other candidates — they went in, they didn’t know the air conditioning didn’t work. They sweated like dogs...How are they gonna beat ISIS? I don’t think it’s gonna happen.","I was down there, and I watched our police and our firemen, down on 7-Eleven, down at the World Trade Center, right after it came down."]
     end # function initialize
 
     ####################
@@ -166,10 +167,15 @@ class Turdbot
                     cowsay($4,"#{$7} -- #{$1}",$5)
                 end
             when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:STOP(.+)?$/i
-            puts "[ #{s} ]"
+                puts "[ #{s} ]"
                 if $1 != @data[:nick]
                     puts "[ stop request from #{$1}!#{$2}@#{$3} ]"
                     @data[:continue] = false
+                end
+            when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:(.+)?T(.+)?R(.+)?U(.+)?M(.+)?P(.+)?$/i
+                if $1 != @data[:nick]
+                    puts "[ triggered tRUMPsay from #{$1}!#{$2}@#{$3} ]"
+                    cowsay($4,"#{@trumpsay.sample} -- tRUMP",$5)
                 end
             else
                 puts s
