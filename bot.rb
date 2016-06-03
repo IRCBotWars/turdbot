@@ -172,7 +172,7 @@ class Turdbot
                     puts "[ stop request from #{$1}!#{$2}@#{$3} ]"
                     @data[:continue] = false
                 end
-            when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:(.+)?T(.+)?R(.+)?U(.+)?M(.+)?P(.+)?$/i
+            when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:(.+)?T(.+)R(.+)U(.+)M(.+)P(.+)?$/i
                 if $1 != @data[:nick]
                     puts "[ triggered tRUMPsay from #{$1}!#{$2}@#{$3} ]"
                     cowsay($4,"#{@trumpsay.sample} -- Le Don",$5)
