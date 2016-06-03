@@ -272,6 +272,6 @@ end # class Turdbot
 #start
 ####################
 
-irc = Turdbot.new('irc.haxzor.ninja', 6667, 'turdbot', '#botwars')
+irc = Turdbot.new('localhost', 6667, 'turdbot', '#botwars')
 irc.connect()
 irc.main_loop()
