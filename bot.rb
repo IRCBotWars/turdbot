@@ -212,7 +212,7 @@ class Turdbot
 
     def countdown(t,chan)
         t = t.to_i
-        if t.is_a?(Integer) and chan.is_a?(String)
+        if 1 == 0
             chat("Countdown commencing...",chan)
             for i in 0..(t-1)
                 if ! @data[:continue]
@@ -227,7 +227,7 @@ class Turdbot
             end
             cowsay(chan)
         else
-            chat("Countdown postponed...",chan)
+            chat("Countdown postponed...get back to work! ;)",chan)
         end
 
     end # function countdown
