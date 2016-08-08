@@ -77,7 +77,14 @@ class Turdbot
     def rand_nick
         new = (0...13).map { (65 + rand(26)).chr }.join
         @irc.send("NICK #{new}\n",0)
+    end # function rand_nick
 
+    ####################
+    #reset nick
+    ####################
+
+    def reset_nick
+        @irc.send("NICK turdbot\n",0)
     end # function rand_nick
 
     ####################
@@ -98,7 +105,6 @@ class Turdbot
             send "JOIN #{@data[:channel]}"
             @data[:id] = true
         end
-
     end # function identify
 
     ####################
@@ -176,6 +182,11 @@ class Turdbot
                 if $1 != @data[:nick]
                     puts "[ new nick request from #{$1}!#{$2}@#{$3} ]"
                     rand_nick()
+                end
+            when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:RESET NICK$/i
+                if $1 != @data[:nick]
+                    puts "[ nick reset from #{$1}!#{$2}@#{$3} ]"
+                    reset_nick()
                 end
             when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:COUNTDOWN (.+)$/i
                 if $1 != @data[:nick]
