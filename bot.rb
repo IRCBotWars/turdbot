@@ -101,7 +101,6 @@ class Turdbot
 
     def identify()
         if !@data[:id]
-            send "PRIVMSG NickServ IDENTIFY #{@data[:passwd]}"
             send "JOIN #{@data[:channel]}"
             @data[:id] = true
         end
@@ -209,7 +208,7 @@ class Turdbot
                     puts "[ stop request from #{$1}!#{$2}@#{$3} ]"
                     @data[:continue] = false
                 end
-            when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:(.+)?TRUMP(.+)?$/i
+	    when /^:(.+?)!(.+?)@(.+?)\sPRIVMSG\s(.+)\s:(.+)?T(.+)?R(.+)?U(.+)?M(.+)?P(.+)?$/i
                 if $1 != @data[:nick]
                     puts "[ triggered tRUMPsay from #{$1}!#{$2}@#{$3} ]"
                     cowsay($4,"#{@trumpsay.sample} -- Le Don",$5)
@@ -255,23 +254,19 @@ class Turdbot
 
     def countdown(t,chan)
         t = t.to_i
-        if 1 == 0
-            chat("Countdown commencing...",chan)
-            for i in 0..(t-1)
-                if ! @data[:continue]
-                    chat("Cancelling countdown!",chan)
-                    @data[:continue] = true
-                    return -1
-                end 
-                num = t - i
-                count = sprintf("%d...",num)
-                chat(count,chan)
-                sleep(1)
+        chat("Countdown commencing...",chan)
+        for i in 0..(t-1)
+            if ! @data[:continue]
+                chat("Cancelling countdown!",chan)
+                @data[:continue] = true
+                return -1
             end
-            cowsay(chan)
-        else
-            chat("Countdown postponed...get back to work! ;)",chan)
+            num = t - i
+            count = sprintf("%d...",num)
+            chat(count,chan)
+            sleep(1)
         end
+        cowsay(chan)
 
     end # function countdown
 
@@ -296,15 +291,15 @@ class Turdbot
                 elsif s == @irc then
                     return if @irc.eof
                     s = @irc.gets
-                    Thread.new{handle_server_input(s)}.pass
+		    Thread.new{handle_server_input(s)}
                 end
             end
             
         end
         rescue Interrupt
         rescue Exception => detail
-            #puts detail.message()
-            #print detail.backtrace.join("\n")
+            puts detail.message()
+            print detail.backtrace.join("\n")
             retry
         end
     end # function main_loop
@@ -315,6 +310,6 @@ end # class Turdbot
 #start
 ####################
 
-irc = Turdbot.new('localhost', 6667, 'turdbot', '#botwars')
+irc = Turdbot.new('matrix.pretalen.com', 6667, 'turdbot', '#citadel')
 irc.connect()
 irc.main_loop()
