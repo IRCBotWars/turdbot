@@ -23,7 +23,7 @@ class Turdbot
         @data[:nick] = nick
         @data[:channel] = channel
         @data[:passwd] = "500ner"
-        @data[:continue] = true
+        @data[:continue] = false
         @data[:id] = false
         @cowlist = ["beavis.zen","bong","bud-frogs","bunny","cheese","cower","daemon",\
             "default","dragon","dragon-and-cow","elephant","elephant-in-snake","eyes",\
@@ -254,11 +254,17 @@ class Turdbot
 
     def countdown(t,chan)
         t = t.to_i
+
+	if @data[:continue]
+                return
+	else
+                @data[:continue] = true
+        end
+
         chat("Countdown commencing...",chan)
         for i in 0..(t-1)
             if ! @data[:continue]
                 chat("Cancelling countdown!",chan)
-                @data[:continue] = true
                 return -1
             end
             num = t - i
@@ -266,6 +272,7 @@ class Turdbot
             chat(count,chan)
             sleep(1)
         end
+	@data[:continue] = false
         cowsay(chan)
 
     end # function countdown
